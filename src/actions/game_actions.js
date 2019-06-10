@@ -11,6 +11,7 @@ export const NEW_TRIAL = 'NEW_TRIAL';
 export const SUBMIT_TRIAL = 'SUBMIT_TRIAL';
 export const START_LEVEL = 'START_LEVEL';
 export const UPDATE_LEVELS_HISTORY = 'UPDATE_LEVELS_HISTORY';
+export const UPDATE_TRIALS_HISTORY = 'UPDATE_TRIALS_HISTORY';
 
 
 function newTrialForGame() {
@@ -97,17 +98,22 @@ function updateLevelsHistory() {
         dispatch({
             type: UPDATE_LEVELS_HISTORY,
         });
-        dispatch(saveGameInfoOnDevice());
+        dispatch(storeGameInfoAndSendTrialsToServer());
     }
 }
 
-function saveGameInfoOnDevice() {
+function storeGameInfoAndSendTrialsToServer() {
     return (dispatch, getState) => {
         const gameState = getState().game;
         AppDataStorage.save('playedLevelsStats', gameState.playedLevelsStats);
-        AppDataStorage.save('trialsHistory', gameState.trialsHistory).then(() => {
-            sendUnsentGameTrials();
-        });
         AppDataStorage.save('stats', gameState.stats);
+
+        sendUnsentGameTrials(gameState.trialsHistory).then(updatedTrialsHistory => {
+            dispatch({type: UPDATE_TRIALS_HISTORY, trialsHistory: updatedTrialsHistory});
+            AppDataStorage.save('trialsHistory', updatedTrialsHistory);
+        }).catch(error => {
+            AppDataStorage.save('trialsHistory', gameState.trialsHistory);
+            throw error;
+        });
     }
 }
