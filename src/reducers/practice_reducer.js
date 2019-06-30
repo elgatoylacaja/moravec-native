@@ -5,6 +5,7 @@ import {
     NEW_TRIAL_PRACTICE,
     START_PRACTICE_MODE,
     SUBMIT_TRIAL_PRACTICE,
+    UPDATE_TRIALS_HISTORY_PRACTICE,
 } from '../actions/practice_actions'
 import {
     hasExceededMaxSolveTime, initilizeSessionInfo,
@@ -95,6 +96,12 @@ export function practiceReducer(state = initialState, action) {
                     totalCorrect),
                 lastAnswerData: updatedLastAnswerData(state.currentTrial, isCorrect, exceededMaxSolveTime),
                 trialsHistory: state.trialsHistory.concat(currentTrialAfterSubmit),
+            };
+
+        case UPDATE_TRIALS_HISTORY_PRACTICE:
+            return {
+                ...state,
+                trialsHistory: action.trialsHistory,
             };
 
         default:

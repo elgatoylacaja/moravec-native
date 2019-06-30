@@ -7,6 +7,7 @@ import {
     START_LEVEL,
     SUBMIT_TRIAL,
     UPDATE_LEVELS_HISTORY,
+    UPDATE_TRIALS_HISTORY,
 } from '../actions/game_actions'
 import {OperationCategory} from "../models/operations/Category";
 import {
@@ -250,6 +251,12 @@ export function gameReducer(state = initialState, action) {
                 ...state,
                 playedLevelsStats: updateLevelStatsIfBetterRecord(state.playedLevelsStats, state.currentLevel),
                 stats: addStatsFromNewTrials(state.stats, state.currentLevel.trials),
+            };
+
+        case UPDATE_TRIALS_HISTORY:
+            return {
+                ...state,
+                trialsHistory: action.trialsHistory,
             };
 
         default:

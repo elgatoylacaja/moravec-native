@@ -9,6 +9,7 @@ export const NEW_TRIAL_PRACTICE = 'NEW_TRIAL_PRACTICE';
 export const CALCULATOR_TYPE_INPUT_PRACTICE = 'CALCULATOR_TYPE_INPUT_PRACTICE';
 export const CALCULATOR_ERASE_INPUT_PRACTICE = 'CALCULATOR_ERASE_INPUT_PRACTICE';
 export const SUBMIT_TRIAL_PRACTICE = 'SUBMIT_TRIAL_PRACTICE';
+export const UPDATE_TRIALS_HISTORY_PRACTICE = 'UPDATE_TRIALS_HISTORY_PRACTICE';
 
 export function loadPracticeData() {
     return (dispatch) => {
@@ -66,16 +67,21 @@ export function submitTrialAndContinue() {
             submitTime: new Date().getTime(),
         });
 
-        dispatch(savePracticeInfoOnDevice());
+        dispatch(storePracticeInfoAndSendTrialsToServer());
         dispatch(newTrialForPractice());
     }
 }
 
-function savePracticeInfoOnDevice() {
+function storePracticeInfoAndSendTrialsToServer() {
     return (dispatch, getState) => {
         const practiceState = getState().practice;
-        AppDataStorage.save('trialsHistory', practiceState.trialsHistory).then(() => {
-            sendUnsentPracticeTrials();
+
+        sendUnsentPracticeTrials(practiceState.trialsHistory).then(updatedTrialsHistory => {
+            dispatch({type: UPDATE_TRIALS_HISTORY_PRACTICE, trialsHistory: updatedTrialsHistory});
+            AppDataStorage.save('trialsHistory', updatedTrialsHistory);
+        }).catch(error => {
+            AppDataStorage.save('trialsHistory', practiceState.trialsHistory);
+            throw error;
         });
     }
 }

@@ -14,24 +14,23 @@ export function sendPersonalInfo(personalInfo) {
 const ARCADE_GAME_TYPE = 'Arcade';
 const PRACTICE_GAME_TYPE = 'Practice';
 
-export function sendUnsentGameTrials() {
-    sendUnsentTrials(ARCADE_GAME_TYPE)
+export function sendUnsentGameTrials(trialsHistory) {
+    return sendUnsentTrials(ARCADE_GAME_TYPE, trialsHistory);
 }
 
-export function sendUnsentPracticeTrials() {
-    sendUnsentTrials(PRACTICE_GAME_TYPE)
+export function sendUnsentPracticeTrials(trialsHistory) {
+    return sendUnsentTrials(PRACTICE_GAME_TYPE, trialsHistory);
 }
 
-function sendUnsentTrials(gameType) {
-    AppDataStorage.fetch('trialsHistory').then((trialsHistory) => {
-        const allUnsentTrials = filterUnsentTrials(trialsHistory);
+function sendUnsentTrials(gameType, trialsHistory) {
+    const allUnsentTrials = filterUnsentTrials(trialsHistory);
 
-        const totalTrials = trialsHistory.length;
+    const totalTrials = trialsHistory.length;
 
-        const totalTrialsSentBefore = totalTrials - allUnsentTrials.length;
+    const totalTrialsSentBefore = totalTrials - allUnsentTrials.length;
 
-        sendTrials(allUnsentTrials, totalTrialsSentBefore, trialsHistory, gameType);
-    });
+    const updatedTrialsHistoryPromise = sendTrials(allUnsentTrials, totalTrialsSentBefore, trialsHistory, gameType);
+    return updatedTrialsHistoryPromise;
 }
 
 function filterUnsentTrials(trials) {
@@ -39,9 +38,9 @@ function filterUnsentTrials(trials) {
 }
 
 function sendTrials(allUnsentTrials, totalTrialsSentBefore, trialsHistory, gameType) {
-    new ApiClient().sendTrials(allUnsentTrials, totalTrialsSentBefore, gameType).then(() => {
+    return new ApiClient().sendTrials(allUnsentTrials, totalTrialsSentBefore, gameType).then(() => {
         const markedHistory = markTrialsAsSent(trialsHistory);
-        AppDataStorage.save('trialsHistory', markedHistory);
+        return markedHistory;
     });
 }
 
