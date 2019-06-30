@@ -1,6 +1,6 @@
 import Config from "react-native-config"
 import moment from "moment/moment";
-import * as DeviceInfo from "react-native-device-info";
+import DeviceInfo from "react-native-device-info";
 import I18n from 'react-native-i18n';
 
 export class ApiClient {

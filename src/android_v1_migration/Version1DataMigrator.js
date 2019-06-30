@@ -1,6 +1,6 @@
 import {OperationCategory} from "../models/operations/Category";
 import {AndroidV1Data} from "./AndroidV1Data";
-import * as DeviceInfo from "react-native-device-info/deviceinfo";
+import DeviceInfo from "react-native-device-info";
 import {NativeSharedPreferences} from "./shared_preferences/NativeSharedPreferences";
 import {AppDataStorage} from "../storage/AppDataStorage";
 
