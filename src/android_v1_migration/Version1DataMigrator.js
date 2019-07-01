@@ -1,22 +1,21 @@
 import {OperationCategory} from "../models/operations/Category";
 import {AndroidV1Data} from "./AndroidV1Data";
-import DeviceInfo from "react-native-device-info";
 import {NativeSharedPreferences} from "./shared_preferences/NativeSharedPreferences";
 import {AppDataStorage} from "../storage/AppDataStorage";
 
 export class Version1DataMigrator {
-    static async wasMigratedBefore() {
-        return await Version1DataMigrator._checkMigrated();
+    async wasMigratedBefore() {
+        return await this._checkMigrated();
     }
 
-    static newForProduction() {
+    static newForProduction(deviceInfoObj, storageBackend) {
         const nativeSharedPreferences = new NativeSharedPreferences();
-        const deviceInfoClass = DeviceInfo;
-        return new Version1DataMigrator(nativeSharedPreferences, deviceInfoClass);
+        return new Version1DataMigrator(nativeSharedPreferences, deviceInfoObj, storageBackend);
     }
 
-    constructor(sharedPreferences, deviceInfoClass) {
+    constructor(sharedPreferences, deviceInfoClass, storageBackend) {
         this._androidV1Data = new AndroidV1Data(sharedPreferences, deviceInfoClass);
+        this._appDataStorage = new AppDataStorage(storageBackend);
     }
 
     async getRawDataForDebugging() {
@@ -110,23 +109,23 @@ export class Version1DataMigrator {
     async _persistThatPersonalDataWasSent() {
         // NOTE: This normally has all the personal info data.
         // For now, we'll not migrate this data as it's not needed anymore (because was sent once before).
-        await AppDataStorage.save("personalInfo", {sentToBackend: true});
+        await this._appDataStorage.save("personalInfo", {sentToBackend: true});
     }
 
     async _storeStatsData(statsData) {
-        await AppDataStorage.save("stats", statsData);
+        await this._appDataStorage.save("stats", statsData);
     }
 
     async _storePlayedLevelStats(statsData) {
-        await AppDataStorage.save("playedLevelsStats", statsData);
+        await this._appDataStorage.save("playedLevelsStats", statsData);
     }
 
     async _persistThatDataWasMigrated() {
-        await AppDataStorage.save("dataMigrated", true);
+        await this._appDataStorage.save("dataMigrated", true);
     }
 
-    static async _checkMigrated() {
-        const dataMigrated = await AppDataStorage.fetch("dataMigrated");
+    async _checkMigrated() {
+        const dataMigrated = await this._appDataStorage.fetch("dataMigrated");
         return dataMigrated !== null;
     }
 

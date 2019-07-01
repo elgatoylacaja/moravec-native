@@ -6,10 +6,10 @@ import {
     PLAYING,
     TOTAL_TRIALS_PER_LEVEL
 } from "../src/reducers/game_reducer";
-import {LOAD_GAME_DATA, START_LEVEL, SUBMIT_TRIAL} from "../src/actions/game_actions";
 import {OperationCategory} from "../src/models/operations/Category";
 import {initilizeSessionInfo} from "../src/reducers/calculator_logic";
 import {NoHint} from "../src/models/hints/NoHint";
+import {LOAD_GAME_DATA, START_LEVEL, SUBMIT_TRIAL} from "../src/actions/game_actions_types";
 
 const currentTime = new Date().getTime();
 

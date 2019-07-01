@@ -6,6 +6,7 @@ import {TermsAndConditions} from "../components/personalInfo/TermsAndConditions"
 import {PersonalInfoForm} from "../components/personalInfo/PersonalInfoForm";
 import {AppDataStorage} from "../storage/AppDataStorage";
 import {sendPersonalInfo} from "../send_data";
+import AsyncStorage from '@react-native-community/async-storage';
 
 const mapStateToProps = (state) => {
     return {
@@ -32,8 +33,10 @@ class PersonalInfo extends Component {
 
     onSubmit(personalInfo) {
         personalInfo['sentToBackend'] = false;
-        AppDataStorage.save('personalInfo', personalInfo).then(() => {
-            sendPersonalInfo(personalInfo).then(() => {
+        const storageBackend = AsyncStorage;
+        const appDataStorage = new AppDataStorage(storageBackend);
+        appDataStorage.save('personalInfo', personalInfo).then(() => {
+            sendPersonalInfo(personalInfo, appDataStorage).then(() => {
                 this.goToHome();
             });
         });

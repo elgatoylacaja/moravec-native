@@ -94,18 +94,19 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "tedxperiments.math.entrenamente"
-        minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 27
-        versionName "2.0.5"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 28
+        versionName "2.0.6"
     }
     signingConfigs {
         release {
@@ -122,7 +123,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
@@ -137,7 +138,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -148,19 +149,20 @@ android {
 }
 
 dependencies {
-    compile project(':bugsnag-react-native')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-youtube')
-    compile project(':react-native-svg')
-    compile project(':react-native-device-info')
-    compile project(':react-native-i18n')
-    compile project(':react-native-keep-awake')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-config')
-    compile project(':react-native-default-preference')
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':bugsnag-react-native')
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-youtube')
+    implementation project(':react-native-svg')
+    implementation project(':react-native-device-info')
+    implementation project(':react-native-i18n')
+    implementation project(':react-native-keep-awake')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-config')
+    implementation project(':react-native-default-preference')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 }
 
 // Run this once to be able to run the application with BUCK

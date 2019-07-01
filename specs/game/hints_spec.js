@@ -21,7 +21,7 @@ export function operationHintsSpec(spec) {
         }
     }
 
-    spec.describe('As a user', function () {
+    spec.describe('As a user', async function () {
         const aPlayer = new MoravecPlayer(spec);
 
         spec.it("asking for a hint for an operation without hints does nothing", async function () {

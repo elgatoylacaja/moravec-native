@@ -1,10 +1,9 @@
 import {ApiClient} from "./api_client/ApiClient";
-import {AppDataStorage} from "./storage/AppDataStorage";
 
-export function sendPersonalInfo(personalInfo) {
+export function sendPersonalInfo(personalInfo, appDataStorage) {
     return new Promise((resolve) => {
         new ApiClient().sendPersonalData(personalInfo).then(() => {
-            AppDataStorage.save('personalInfo', {...personalInfo, sentToBackend: true}).then(() => {
+            appDataStorage.save('personalInfo', {...personalInfo, sentToBackend: true}).then(() => {
                 resolve();
             });
         });

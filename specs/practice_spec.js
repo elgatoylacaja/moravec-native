@@ -9,7 +9,7 @@ export function practiceSpec(spec) {
 
     // Spec
 
-    spec.describe('As a user', function () {
+    spec.describe('As a user', async function () {
         const aPlayer = new MoravecPlayer(spec);
         const calculatorAsserts = new CalculatorAssertions(spec);
 

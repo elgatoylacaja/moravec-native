@@ -6,11 +6,13 @@ Requirements: Node 10.15 LTS, Java 8.
 
 Just set ENVFILE var to '.env.test' before running the app.
 
-On Webstorm, you can duplicate the original app runner and set this Environment variable on the configuration window 
-for the copy.
+Run integration tests on Android with:
 
-Tests results will appear in log console. 
+    ENVFILE=.env.test cavy run-android
 
+Run integration tests on iOS with:
+
+    ENVFILE=.env.test cavy run-ios
 
 ## Playing tutorial videos
 
@@ -31,15 +33,15 @@ Copy APK signature config (gradle.properties and .keystore file) into android/ap
 
 Run Unit tests with:
 
-    jest
+    jest __tests__
 
 Run integration tests on Android with:
 
-    ENVFILE=.env.test react-native run-android
+    ENVFILE=.env.test cavy run-android
 
 Run integration tests on iOS with:
 
-    ENVFILE=.env.test react-native run-ios
+    ENVFILE=.env.test cavy run-ios
     
 Make sure all tests pass before proceeding.
 

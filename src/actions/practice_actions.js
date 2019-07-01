@@ -2,6 +2,7 @@ import {PracticeMode} from "../models/practice/PracticeMode";
 import {AppDataStorage} from "../storage/AppDataStorage";
 import {sendUnsentPracticeTrials} from "../send_data";
 import {createRandomOperationFor} from "./common";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export const LOAD_PRACTICE_DATA = 'LOAD_PRACTICE_DATA';
 export const START_PRACTICE_MODE = 'START_PRACTICE_MODE';
@@ -13,7 +14,9 @@ export const UPDATE_TRIALS_HISTORY_PRACTICE = 'UPDATE_TRIALS_HISTORY_PRACTICE';
 
 export function loadPracticeData() {
     return (dispatch) => {
-        AppDataStorage.fetch('trialsHistory').then(trialsHistory => {
+        const storageBackend = AsyncStorage;
+        const appDataStorage = new AppDataStorage(storageBackend);
+        appDataStorage.fetch('trialsHistory').then(trialsHistory => {
             dispatch({
                 type: LOAD_PRACTICE_DATA,
                 trialsHistory: trialsHistory || [],
@@ -75,12 +78,14 @@ export function submitTrialAndContinue() {
 function storePracticeInfoAndSendTrialsToServer() {
     return (dispatch, getState) => {
         const practiceState = getState().practice;
+        const storageBackend = AsyncStorage;
+        const appDataStorage = new AppDataStorage(storageBackend);
 
         sendUnsentPracticeTrials(practiceState.trialsHistory).then(updatedTrialsHistory => {
             dispatch({type: UPDATE_TRIALS_HISTORY_PRACTICE, trialsHistory: updatedTrialsHistory});
-            AppDataStorage.save('trialsHistory', updatedTrialsHistory);
+            appDataStorage.save('trialsHistory', updatedTrialsHistory);
         }).catch(error => {
-            AppDataStorage.save('trialsHistory', practiceState.trialsHistory);
+            appDataStorage.save('trialsHistory', practiceState.trialsHistory);
             throw error;
         });
     }

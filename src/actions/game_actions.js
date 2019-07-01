@@ -1,18 +1,19 @@
 import {emptyStats, LEVEL_FINISHED} from "../reducers/game_reducer";
 import {AppDataStorage} from "../storage/AppDataStorage";
+import AsyncStorage from '@react-native-community/async-storage';
 import {sendUnsentGameTrials} from "../send_data";
 import {createRandomOperationFor} from "./common";
-
-export const LOAD_GAME_DATA = 'LOAD_GAME_DATA';
-export const CALCULATOR_TYPE_INPUT = 'CALCULATOR_TYPE_INPUT';
-export const CALCULATOR_ERASE_INPUT = 'CALCULATOR_ERASE_INPUT';
-export const ASK_FOR_HINT = 'ASK_FOR_HINT';
-export const NEW_TRIAL = 'NEW_TRIAL';
-export const SUBMIT_TRIAL = 'SUBMIT_TRIAL';
-export const START_LEVEL = 'START_LEVEL';
-export const UPDATE_LEVELS_HISTORY = 'UPDATE_LEVELS_HISTORY';
-export const UPDATE_TRIALS_HISTORY = 'UPDATE_TRIALS_HISTORY';
-
+import {
+    ASK_FOR_HINT,
+    CALCULATOR_ERASE_INPUT,
+    CALCULATOR_TYPE_INPUT,
+    LOAD_GAME_DATA,
+    NEW_TRIAL,
+    START_LEVEL,
+    SUBMIT_TRIAL,
+    UPDATE_LEVELS_HISTORY,
+    UPDATE_TRIALS_HISTORY
+} from "./game_actions_types";
 
 function newTrialForGame() {
     return (dispatch, getState) => {
@@ -30,8 +31,10 @@ function newTrialForGame() {
 export function loadGameData() {
     return (dispatch, getState) => {
         const playedLevelsStats = getState().levels.playedLevelsStats;
-        const trialsHistory = AppDataStorage.fetch('trialsHistory');
-        const stats = AppDataStorage.fetch('stats');
+        const storageBackend = AsyncStorage;
+        const appDataStorage = new AppDataStorage(storageBackend);
+        const trialsHistory = appDataStorage.fetch('trialsHistory');
+        const stats = appDataStorage.fetch('stats');
 
         Promise.all([trialsHistory, stats]).then(promiseValues => {
             dispatch({
@@ -105,14 +108,15 @@ function updateLevelsHistory() {
 function storeGameInfoAndSendTrialsToServer() {
     return (dispatch, getState) => {
         const gameState = getState().game;
-        AppDataStorage.save('playedLevelsStats', gameState.playedLevelsStats);
-        AppDataStorage.save('stats', gameState.stats);
-
+        const storageBackend = AsyncStorage;
+        const appDataStorage = new AppDataStorage(storageBackend);
+        appDataStorage.save('playedLevelsStats', gameState.playedLevelsStats);
+        appDataStorage.save('stats', gameState.stats);
         sendUnsentGameTrials(gameState.trialsHistory).then(updatedTrialsHistory => {
             dispatch({type: UPDATE_TRIALS_HISTORY, trialsHistory: updatedTrialsHistory});
-            AppDataStorage.save('trialsHistory', updatedTrialsHistory);
+            appDataStorage.save('trialsHistory', updatedTrialsHistory);
         }).catch(error => {
-            AppDataStorage.save('trialsHistory', gameState.trialsHistory);
+            appDataStorage.save('trialsHistory', gameState.trialsHistory);
             throw error;
         });
     }

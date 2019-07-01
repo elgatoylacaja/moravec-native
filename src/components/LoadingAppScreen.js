@@ -1,14 +1,22 @@
 import React from "react";
-import {Platform, View, StatusBar} from "react-native";
+import {Platform, View} from "react-native";
 import {Spinner} from "native-base";
 import {MAIN_STYLES, spinnerColor} from "../styles/main/styles";
 import {Version1DataMigrator} from "../android_v1_migration/Version1DataMigrator";
 import {AppDataStorage} from "../storage/AppDataStorage";
 import {sendPersonalInfo} from "../send_data";
 import SplashScreen from 'react-native-splash-screen'
+import DeviceInfo from "react-native-device-info";
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export class LoadingAppScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        const storageBackend = AsyncStorage;
+        this._appDataStorage = new AppDataStorage(storageBackend);
+    }
+
     componentDidMount() {
         SplashScreen.hide();
 
@@ -30,21 +38,23 @@ export class LoadingAppScreen extends React.Component {
             return;
         }
 
-        const wasMigratedBefore = await Version1DataMigrator.wasMigratedBefore();
+        const deviceInfoObj = DeviceInfo;
+        const storageBackend = AsyncStorage;
+        const migrator = Version1DataMigrator.newForProduction(deviceInfoObj, storageBackend);
+        const wasMigratedBefore = await migrator.wasMigratedBefore();
         if (!wasMigratedBefore) {
-            const migrator = Version1DataMigrator.newForProduction();
             return migrator.migrateAll();
         }
     }
 
     async _wasPersonalInfoCompletedBefore() {
-        return await AppDataStorage.exists('personalInfo');
+        return await this._appDataStorage.exists('personalInfo');
     }
 
     async _retrySendPersonalInfoIfNotSentBefore() {
-        const savedPersonalInfo = await AppDataStorage.fetch('personalInfo');
+        const savedPersonalInfo = await this._appDataStorage.fetch('personalInfo');
         if (!savedPersonalInfo.sentToBackend) {
-            return sendPersonalInfo(savedPersonalInfo);
+            return sendPersonalInfo(savedPersonalInfo, this._appDataStorage);
         }
     }
 

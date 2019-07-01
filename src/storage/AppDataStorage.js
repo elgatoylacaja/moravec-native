@@ -1,13 +1,15 @@
-import {AsyncStorage} from "react-native";
-
 export class AppDataStorage {
-    static save(key, value) {
-        return AsyncStorage.setItem(`@moravec:${key}`, JSON.stringify(value));
+    constructor(backend) {
+        this._backend = backend;
     }
 
-    static fetch(key) {
+    save(key, value) {
+        return this._backend.setItem(`@moravec:${key}`, JSON.stringify(value));
+    }
+
+    fetch(key) {
         return new Promise((resolve) => {
-            AsyncStorage.getItem(`@moravec:${key}`).then((jsonData) => {
+            this._backend.getItem(`@moravec:${key}`).then((jsonData) => {
                 if (jsonData !== null) {
                     return resolve(JSON.parse(jsonData));
                 } else {
@@ -17,9 +19,9 @@ export class AppDataStorage {
         });
     }
 
-    static exists(key) {
+    exists(key) {
         return new Promise((resolve) => {
-            AsyncStorage.getItem(`@moravec:${key}`).then((value) => {
+            this._backend.getItem(`@moravec:${key}`).then((value) => {
                 return resolve(value !== null);
             })
         });

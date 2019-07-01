@@ -35,8 +35,6 @@ android/app/gradle.properties*
 #
 node_modules/
 npm-debug.log
-metro-bundler-*
-haste-map-*
 yarn-error.log
 
 # BUCK
@@ -54,6 +52,9 @@ buck-out/
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
+
+# Bundle artifact
+*.jsbundle
 
 # SECRETS
 secrets.js

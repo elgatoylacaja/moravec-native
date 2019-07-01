@@ -1,14 +1,3 @@
-import {
-    ASK_FOR_HINT,
-    CALCULATOR_ERASE_INPUT,
-    CALCULATOR_TYPE_INPUT,
-    LOAD_GAME_DATA,
-    NEW_TRIAL,
-    START_LEVEL,
-    SUBMIT_TRIAL,
-    UPDATE_LEVELS_HISTORY,
-    UPDATE_TRIALS_HISTORY,
-} from '../actions/game_actions'
 import {OperationCategory} from "../models/operations/Category";
 import {
     calculateTotalTrialTime,
@@ -22,6 +11,14 @@ import {
     updatedTrialAfterSubmit,
     updateTotalCorrect
 } from "./calculator_logic";
+import {
+  ASK_FOR_HINT, CALCULATOR_ERASE_INPUT, CALCULATOR_TYPE_INPUT, LOAD_GAME_DATA,
+  NEW_TRIAL,
+  START_LEVEL,
+  SUBMIT_TRIAL,
+  UPDATE_LEVELS_HISTORY,
+  UPDATE_TRIALS_HISTORY
+} from "../actions/game_actions_types";
 
 export const LOADING = 'LOADING';
 export const PLAYING = 'PLAYING';
