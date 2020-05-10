@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tedxperiments.math.entrenamente"
-    android:versionCode="28"
-    android:versionName="2.0.6">
+    android:versionCode="29"
+    android:versionName="2.0.7">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
