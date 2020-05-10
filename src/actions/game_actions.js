@@ -14,6 +14,7 @@ import {
     UPDATE_LEVELS_HISTORY,
     UPDATE_TRIALS_HISTORY
 } from "./game_actions_types";
+import {SendDataToBackendError} from "../api_client/SendDataToBackendError";
 
 function newTrialForGame() {
     return (dispatch, getState) => {
@@ -116,8 +117,11 @@ function storeGameInfoAndSendTrialsToServer() {
             dispatch({type: UPDATE_TRIALS_HISTORY, trialsHistory: updatedTrialsHistory});
             appDataStorage.save('trialsHistory', updatedTrialsHistory);
         }).catch(error => {
-            appDataStorage.save('trialsHistory', gameState.trialsHistory);
-            throw error;
+            if (error instanceof SendDataToBackendError) {
+                appDataStorage.save('trialsHistory', gameState.trialsHistory);
+            } else {
+                throw error;
+            }
         });
     }
 }

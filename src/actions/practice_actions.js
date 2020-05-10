@@ -3,6 +3,7 @@ import {AppDataStorage} from "../storage/AppDataStorage";
 import {sendUnsentPracticeTrials} from "../send_data";
 import {createRandomOperationFor} from "./common";
 import AsyncStorage from "@react-native-community/async-storage";
+import {SendDataToBackendError} from "../api_client/SendDataToBackendError";
 
 export const LOAD_PRACTICE_DATA = 'LOAD_PRACTICE_DATA';
 export const START_PRACTICE_MODE = 'START_PRACTICE_MODE';
@@ -85,8 +86,11 @@ function storePracticeInfoAndSendTrialsToServer() {
             dispatch({type: UPDATE_TRIALS_HISTORY_PRACTICE, trialsHistory: updatedTrialsHistory});
             appDataStorage.save('trialsHistory', updatedTrialsHistory);
         }).catch(error => {
-            appDataStorage.save('trialsHistory', practiceState.trialsHistory);
-            throw error;
+            if (error instanceof SendDataToBackendError) {
+                appDataStorage.save('trialsHistory', practiceState.trialsHistory);
+            } else {
+                throw error;
+            }
         });
     }
 }

@@ -1,12 +1,21 @@
 import {ApiClient} from "./api_client/ApiClient";
+import {SendDataToBackendError} from "./api_client/SendDataToBackendError";
 
 export function sendPersonalInfo(personalInfo, appDataStorage) {
     return new Promise((resolve) => {
-        new ApiClient().sendPersonalData(personalInfo).then(() => {
-            appDataStorage.save('personalInfo', {...personalInfo, sentToBackend: true}).then(() => {
-                resolve();
+        new ApiClient().sendPersonalData(personalInfo)
+            .then(() => {
+                appDataStorage.save('personalInfo', {...personalInfo, sentToBackend: true}).then(() => {
+                    resolve();
+                });
+            })
+            .catch((error) => {
+                if (error instanceof SendDataToBackendError) {
+                    resolve();
+                } else {
+                    throw error;
+                }
             });
-        });
     });
 }
 

@@ -2,6 +2,7 @@ import Config from "react-native-config"
 import moment from "moment/moment";
 import DeviceInfo from "react-native-device-info";
 import I18n from 'react-native-i18n';
+import {SendDataToBackendError} from "./SendDataToBackendError";
 
 export class ApiClient {
     static baseUrl() {
@@ -16,9 +17,13 @@ export class ApiClient {
             Object.assign(fetchOptions, {body: JSON.stringify(body)});
         }
 
-        return fetch(ApiClient.baseUrl() + url, fetchOptions).then((response) => {
-            return response.json();
-        });
+        return fetch(ApiClient.baseUrl() + url, fetchOptions)
+            .then((response) => {
+                return response.json();
+            })
+            .catch(() => {
+                throw new SendDataToBackendError("ApiClient couldn't send the data to Moravec's backend server :(");
+            });
     }
 
     sendTrials(trialsToSend, lastTrialNumberSent, gameType) {
