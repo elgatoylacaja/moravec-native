@@ -9,7 +9,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.0",
     "bugsnag-react-native": "^2.12.5",
-    "mathjs": "^3.18.1",
+    "mathjs": "^7.5.1",
     "moment": "^2.20.1",
     "moment-duration-format": "^2.2.1",
     "native-base": "^2.7.1",
