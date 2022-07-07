@@ -10,7 +10,7 @@
     "@react-native-community/async-storage": "^1.5.0",
     "bugsnag-react-native": "^2.12.5",
     "mathjs": "^3.18.1",
-    "moment": "^2.20.1",
+    "moment": "^2.29.4",
     "moment-duration-format": "^2.2.1",
     "native-base": "^2.7.1",
     "react": "16.8.3",
